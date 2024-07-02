@@ -78,6 +78,76 @@ L.tileLayer('http://localhost:8080/data/{z}/{x}/{y}.png', {
 }).addTo(map);
 ```
 
+### Detailed Examples
+
+#### Example 1: Setting Up a Basic TileServer with Docker
+
+1. **Install Docker**: Make sure Docker is installed and running on your system.
+2. **Create a Directory for Data**: 
+   ```bash
+   mkdir -p ~/tileserver-data
+   cd ~/tileserver-data
+   ```
+3. **Download Sample Data**:
+   ```bash
+   wget https://example.com/sample-data.mbtiles -O data.mbtiles
+   ```
+4. **Run the Docker Container**:
+   ```bash
+   docker run --rm -it -v $(pwd):/data -p 8080:80 maptiler/tileserver-gl
+   ```
+5. **Access the Tiles**: Open your web browser and go to `http://localhost:8080`.
+
+#### Example 2: Customizing the TileServer Configuration
+
+1. **Create a Custom Configuration File** (`config.json`):
+   ```json
+   {
+     "options": {
+       "paths": {
+         "root": "/data"
+       }
+     },
+     "styles": {
+       "custom-style": {
+         "style": "custom-style.json",
+         "tilejson": {
+           "type": "overlay"
+         }
+       }
+     }
+   }
+   ```
+2. **Create a Custom Style File** (`custom-style.json`):
+   ```json
+   {
+     "version": 8,
+     "name": "Custom Style",
+     "sources": {
+       "raster-tiles": {
+         "type": "raster",
+         "tiles": [
+           "http://localhost:8080/data/{z}/{x}/{y}.png"
+         ],
+         "tileSize": 256
+       }
+     },
+     "layers": [
+       {
+         "id": "simple-tiles",
+         "type": "raster",
+         "source": "raster-tiles",
+         "minzoom": 0,
+         "maxzoom": 22
+       }
+     ]
+   }
+   ```
+3. **Run the TileServer with the Custom Configuration**:
+   ```bash
+   tileserver-gl config.json
+   ```
+
 ## Contributing
 Contributions are welcome! Please open an issue or submit a pull request on GitHub.
 
